@@ -1,30 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreatePersonDto } from './dto/create-person.dto';
-import { PersonDto } from './dto/person.dto';
-
+import { Person, PersonDocument } from './schema/person.schema';
 
 @Injectable()
 export class PeopleService {
-    private people: PersonDto[] = [];
-    private idCounter = 1;
+    constructor(@InjectModel(Person.name) private personModel: Model<PersonDocument>) {}
 
-    getAllPersons(): PersonDto[] {
-        return this.people;
+    async getAllPersons(): Promise<Person[]> {
+        return this.personModel.find().exec();
     }
 
-    addPerson(dto: CreatePersonDto): PersonDto {
-        const person: PersonDto = {
-            id: this.idCounter++,
-            ...dto,
-        };
-        console.log(person)
-        this.people.push(person);
-        return person;
+    async addPerson(dto: CreatePersonDto): Promise<Person> {
+        const createdPerson = new this.personModel(dto);
+        return createdPerson.save();
     }
 
-    removePerson(id: number): boolean {
-        const initial = this.people.length;
-        this.people = this.people.filter(p => p.id !== id);
-        return this.people.length < initial;
+    async removePerson(id: string): Promise<boolean> {
+        const result = await this.personModel.deleteOne({ _id: id }).exec();
+        return result.deletedCount > 0;
     }
 }

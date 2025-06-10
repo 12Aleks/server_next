@@ -18,6 +18,6 @@ export class PeopleController {
 
     @Delete(':id')
     remove(@Param('id') id: string) {
-        return this.peopleService.removePerson(Number(id));
+        return this.peopleService.removePerson(id);
     }
 }

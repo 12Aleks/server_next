@@ -22,6 +22,9 @@ import { PeopleModule } from './people/people.module';
         const dbname = encodeURIComponent(configService.get<string>('mongo.db'));
 
         const uri = `mongodb+srv://${username}:${password}@cluster0.gi4j3eo.mongodb.net/${dbname}?retryWrites=true&w=majority`;
+
+
+
         return { uri };
       },
     }),
